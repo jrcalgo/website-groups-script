@@ -30,7 +30,8 @@ def new_url_group(group={'name': {'url1':'http://www.google.com','url2':'https:/
             groups = {'groups':group}
             json.dump(groups, output, indent=4)
         else:
-            json.dump(group, output, indent=4)
+            groups['groups'].add(group)
+            json.dump(groups, output, indent=4)
 
 def get_url_group_names() -> list:
     try:
@@ -68,22 +69,23 @@ def open_url_group(group_name:str=''):
     group = get_url_group(group_name)
     pass
 
-ACTIONS = ['open group', 'list groups', 'new group', 'edit group', 'remove group']
+COMMANDS = ['open group', 'list groups', 'new group', 'edit group', 'remove group']
 while True:
-    print ("Avaiable commands: ")
-    for action in ACTIONS: print(action)
+    print ("Available commands: ")
+    commands = ', '.join(COMMANDS)
+    print (commands)
     while True:
-        action = input("Enter action: ")
-        if action in ACTIONS: break
-        else: print("invalid action")
-    if action == 'open group':
+        command = input("Enter command: ")
+        if command in COMMANDS: break
+        else: print("invalid command")
+    if command == 'open group':
         group_name = input("Enter group name: ")
         open_url_group(group_name)
-    if action == 'list groups':
-        for group in 
-    if action == 'new group':
+    if command == 'list groups':
+        for group in get_url_group_names():
+            print(group)
+    if command == 'new group':
         group={}
-        groups = {{}}
         urls = [()]
         while True:
             while True:
@@ -107,9 +109,9 @@ while True:
                 group[group_name] = {url_name: link}
             new_url_group(group)
             if input("Add another group? (y/n) ").lower() == 'n': break
-    if action == 'edit group':
+    if command == 'edit group':
         group_name = input("Enter group name: ")
         edit_url_group(group_name)
-    if action == 'remove group':
+    if command == 'remove group':
         group_name = input("Enter group name: ")
         remove_url_group(group_name)
