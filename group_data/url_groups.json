@@ -1,11 +1,10 @@
 {
-    "group1": {
-        "url1": "https://www.google.com",
-        "url2": "https://www.bing.com"
-    }
-}{
-    "group1": {
-        "url1": "https://www.google.com",
-        "url2": "https://www.bing.com"
+    "groups": {
+        "group1": {
+            "url": "https://www.url.com"
+        },
+        "group2": {
+            "openai": "https://www.openai.com"
+        }
     }
 }
