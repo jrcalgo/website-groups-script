@@ -1,4 +1,4 @@
-import tkinter as tk
+import collections
 from urllib.parse import urlparse
 import json
 import os
@@ -93,7 +93,13 @@ def remove_url_group(group_name:str=''):
 
 def sort_file_by_name(path:str=''):
     with open(GROUP_PATH, 'r+') as file:
-
+        groups = json.load(file)
+        sorted_groups = collections.OrderedDict(sorted(groups['groups'].items()))
+        groups['groups'] = sorted_groups
+        file.seek(0)
+        file.truncate()
+        json.dump(groups, file, indent=4)
+        
 def open_url_group(group_name:str=''):
     group = get_url_group(group_name)
     pass
