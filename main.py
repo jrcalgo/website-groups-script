@@ -1,5 +1,6 @@
 import collections
 from urllib.parse import urlparse
+import webbrowser
 import json
 import os
 
@@ -57,21 +58,16 @@ def get_url_group(group_name:str="") -> dict:
         
     return groups['groups'][group_name]
         
-def edit_url_group(group_name:str='', new_group_name:str='', new_urls:dict={'url1':'http://www.google.com','url2':'https://www.amazon.com'}):
+def edit_url_group(group_name:str='', new_group_name:str='', new_urls:dict={}):
     group = get_url_group(group_name)
     with open(GROUP_PATH, 'r+') as output:
-        groups = json.load(output)
-        if new_group_name != '':
-            group = groups['groups'].pop(group_name)
-            groups['groups'][new_group_name] = group
-        else:
-            while True:
-                new_group_name = input("Enter new group name: ")
-                if new_group_name in get_url_group_names(): print("group name already exists")
-                else: break
-            group = groups['groups'].pop(group_name)
-            groups['groups'][new_group_name] = group
         if group_name in get_url_group_names():
+            groups = json.load(output)
+            if new_group_name != '':
+                group = groups['groups'].pop(group_name)
+                groups['groups'][new_group_name] = group
+            if new_urls != {}:
+                pass
             output.seek(0)
             groups['groups'].update(group)
             output.seek(0)
@@ -91,7 +87,7 @@ def remove_url_group(group_name:str=''):
         else:
             print("group name does not exist"); return
 
-def sort_file_by_name(path:str=''):
+def sort_file_by_name():
     with open(GROUP_PATH, 'r+') as file:
         groups = json.load(file)
         sorted_groups = collections.OrderedDict(sorted(groups['groups'].items()))
@@ -99,11 +95,19 @@ def sort_file_by_name(path:str=''):
         file.seek(0)
         file.truncate()
         json.dump(groups, file, indent=4)
-        
+
 def open_url_group(group_name:str=''):
     group = get_url_group(group_name)
-    pass
-
+    if group:
+        first_url = True
+        for url in group.values():
+            if first_url:
+                webbrowser.open(url, new=1)
+                first_url = False
+            else:
+                webbrowser.open_new_tab(url)
+    else:
+        return
 
 COMMANDS = ['open', 'list', 'new', 'edit', 'remove']
 while True:
@@ -145,6 +149,7 @@ while True:
                 group[group_name] = {url_name: link}
             new_url_group(group)
             if input("Add another group? (y/n): ").lower() == 'n': break
+        sort_file_by_name()
     elif command == COMMANDS[3]:
         while True:
             group_name = input("Enter group name: ")
@@ -159,7 +164,7 @@ while True:
                 else: break
             else: break
         while True:
-
+            pass
         edit_url_group(group_name)
     elif command == COMMANDS[4]:
         group_name = input("Enter group name: ")
