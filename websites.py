@@ -25,7 +25,7 @@ def new_url_group(group={'name': {'url1': 'http://www.google.com','url2': 'https
     if url_tuples == [()]:
         print("no URL pairs specified"); return
     
-    mode = 'r+' if os.path.isfile(GROUP_PATH) else 'w'
+    mode = 'r+' if os.path.isfile(GROUP_PATH) or (os.path.isfile(GROUP_PATH) and os.stat(GROUP_PATH).st_size != 0) else 'w'
     with open(GROUP_PATH, mode) as output: 
         if mode == 'w':
             groups = {'groups':group}
@@ -44,20 +44,18 @@ def get_url_group_names() -> list:
     try:
         with open(GROUP_PATH, 'r') as file:
             groups = json.load(file)
-    except IOError:
-        print("IOError: Unable to open url_groups.json. Terminating execution."); return
-
-    return list(groups['groups'].keys())
+            return list(groups['groups'].keys())
+    except:
+        return []
 
 def get_url_group(group_name:str="") -> dict:
     if group_name in get_url_group_names(): print("invalid group name"); return
     try:
         with open(GROUP_PATH, 'r') as file:
             groups = json.load(file)
-    except IOError:
-        print("IOError: Unable to open url_groups.json. Terminating execution."); return
-        
-    return groups['groups'][group_name]
+            return groups['groups'][group_name]
+    except:
+        return []
        
 ## when editing urls, new_urls will replace all existing urls in said group if append is False
 ## warning: append being True will still overwrite existing urls if key is the same as existing url
@@ -142,9 +140,10 @@ while True:
         urls = []
         while True:
             while True:
-                group_name = input("Enter group name: ")
-                if group_name == '': print("invalid group name")
-                elif group_name in get_url_group_names(): print("group name already exists")
+                new_group_name = input("Enter group name: ")
+                if new_group_name == '': print("invalid group name")
+                elif get_url_group_names() != [] and new_group_name in get_url_group_names(): print("invalid group name")
+                elif get_url_group_names() != [] and new_group_name not in get_url_group_names(): break
                 else: break
             while True:
                 url = input("Enter URL name: ")
@@ -157,7 +156,7 @@ while True:
                 if input("Add another URL? (y/n): ").casefold() == 'n': break
             for url in urls:
                 url_name, link = url
-                group[group_name] = {url_name: link}
+                group[new_group_name] = {url_name: link}
             new_url_group(group)
             if input("Add another group? (y/n): ").casefold() == 'n': break
         sort_file_by_name()
