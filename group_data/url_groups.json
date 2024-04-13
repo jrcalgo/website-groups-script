@@ -1,10 +1,13 @@
 {
     "groups": {
-        "group1": {
-            "url": "https://www.url.com"
-        },
-        "group2": {
-            "openai": "https://www.openai.com"
+        "opencv_bootcamp_notebooks": {
+            "01_Getting_Started_with_Images": "https://colab.research.google.com/drive/1qH55jpAaSTyWgsrrlv96-76eCiVbJQkF#scrollTo=sRszIpSyOnUD",
+            "02_Basic_Image_Manipulations_Crop_Resize_Flip_and_Modify_Pixels": "https://colab.research.google.com/drive/1Y1aAZhv-IjoyBd2BQH3kN67N6hLEgIQH",
+            "03_Annotating_Images": "https://colab.research.google.com/drive/1aBQM1wyQGWrGm6lTZtbcJD5F6Scubvhc#scrollTo=_v3D-d5leyZ9",
+            "04_Basic_Image_Enhancement_Mathematical_Operations": "https://colab.research.google.com/drive/1ltqgOcv_aoYoxQ_5E-kFyXGf6KqSOwrg",
+            "06_Writing_Video_using_OpenCV": "https://colab.research.google.com/drive/1g0YaxF4qLnzPY1VQBK2APsmO-H7QQXSw",
+            "08_Image_Alignment": "https://colab.research.google.com/drive/1cQqOYar7ZlPB6XRAdPHur4bLmPPdr59w",
+            "09_panorama": "https://colab.research.google.com/drive/1BykDdFSO7eVMGoWFgDI3ZgruwJ8GmUYt"
         }
     }
 }
