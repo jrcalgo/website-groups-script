@@ -1,8 +1,12 @@
 import collections
 from urllib.parse import urlparse
 import webbrowser
+import datetime
 import json
+import csv
 import os
+
+SORT_ARGS = ['-az', '-za', '-mr', '-lr']
 
 ## GROUP_PATH to url groups file
 GROUP_PATH = './group_data/url_groups.json'
@@ -16,7 +20,7 @@ def get_url_group_names() -> list:
         return []
 
 def get_url_group(group_name:str="") -> dict:
-    if group_name in get_url_group_names(): print("invalid group name"); return
+    if group_name not in get_url_group_names(): print("group does not exist"); return
     try:
         with open(GROUP_PATH, 'r') as file:
             groups = json.load(file)
@@ -24,7 +28,17 @@ def get_url_group(group_name:str="") -> dict:
     except:
         return []
 
-def sort_file_by_name():
+def sort_file(sort_arg:str="-az"):
+    if sort_arg not in SORT_ARGS: print("invalid sort argument"); return
+    elif sort_arg == "" or sort_arg == '-az':
+        pass
+    elif sort_arg == '-za':
+        pass
+    elif sort_arg == '-mr':
+        pass
+    elif sort_arg == '-lr':
+        pass
+    
     with open(GROUP_PATH, 'r+') as file:
         groups = json.load(file)
         sorted_groups = collections.OrderedDict(sorted(groups['groups'].items()))
@@ -40,14 +54,14 @@ def open_url_group(group_name:str=''):
             first_url = True
             for url in group.values():
                 if first_url:
-                    webbrowser.open(url, new=1)
+                    webbrowser.open(url, new=1, autoraise=False)
                     first_url = False
                 else:
-                    webbrowser.open_new_tab(url)
+                    webbrowser.open(url, new=2, autoraise=False)
         else:
             return
     except:
-        print("**error opening group**"); return
+        print("*** error opening group ***"); return
     
 def fix_file():
     pass
@@ -56,6 +70,7 @@ COMMANDS = ['open', 'list', 'sort', 'fix_file']
 while True:
     command = ''
     group_name = ''
+    sort_arg = ''
     valid_input = False
 
     print ("Available commands: ")
@@ -67,17 +82,21 @@ while True:
             command = command_input[0]
             if command not in COMMANDS:
                 print("invalid command"); break
-            elif (command == 'list' or command == 'sort') and len(command_input) > 1:
+            elif (command == COMMANDS[1] or command == COMMANDS[2]) and len(command_input) > 1:
                 print("command requires no arguments"); break
-            elif command == 'list' or command == 'sort':
+            elif command == COMMANDS[1] or command == COMMANDS[2]:
                 valid_input = True
                 break
-            group_arg = command_input[1:]
-            if len(group_arg) > 1:
+            arg = command_input[1:]
+            if len(arg) > 1:
                 print("too many arguments, executing first argument only, if applicable")
                 continue
-            if group_arg[0] not in COMMANDS and group_arg[0] in get_url_group_names():
-                group_name = group_arg[0]
+            if command == COMMANDS[0] and arg[0] in get_url_group_names():
+                group_name = arg[0]
+                valid_input = True
+                break
+            elif command == COMMANDS[3] and arg[0] in SORT_ARGS:
+                sort_arg = arg[0]
                 valid_input = True
                 break
             else: print("invalid command")
@@ -90,13 +109,13 @@ while True:
             print(group)
         print("=========================")
     elif command == COMMANDS[2]:
-        sort_file_by_name()
+        sort_file(sort_arg)
         print("=========================")
         print("file sorted")
         print("=========================")
     elif command == COMMANDS[3]:
         print("***WARNING: this will deprecate the old file in the directory, if it exists")
-        if input("do you want to continue? (y/n): ").casefold() == 'y':
+        if input("Are you sure you want to continue (y/n): ").casefold() == 'y':
             fix_file()
             print("=========================")
             print("file fixed")
@@ -104,3 +123,4 @@ while True:
             break
         else:
             break
+    
