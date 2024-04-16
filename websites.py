@@ -7,9 +7,11 @@ import csv
 import os
 
 SORT_ARGS = ['-az', '-za', '-mr', '-lr']
+FIX_ARGS = ['-j', '-c', '-jc']
 
 ## GROUP_PATH to url groups file
 GROUP_PATH = './group_data/url_groups.json'
+RECENT_USE_PATH = './group_data/recent_url_groups.csv'
 
 def get_url_group_names() -> list:
     try:
@@ -63,14 +65,34 @@ def open_url_group(group_name:str=''):
     except:
         print("*** error opening group ***"); return
     
-def fix_file():
-    pass
-
+def fix_file(args:str='-jc'):
+    if args == '-j' or args == '-jc':
+        if os.path.exists(GROUP_PATH):
+            DEPRECATED_PATH = './group_data/url_groups_deprecated.json'
+            iter = 1
+            while os.path.exists(DEPRECATED_PATH):
+                DEPRECATED_PATH = f'./group_data/url_groups_deprecated_{iter}.json'
+            os.rename(GROUP_PATH, DEPRECATED_PATH)
+        with open(GROUP_PATH, 'w') as file:
+            file.seek(0)
+            json.dump({"groups": {}}, file, indent=4)
+    elif args =='-c' or args == '-jc':
+        if os.path.exists(RECENT_USE_PATH):
+            DEPRECATED_PATH = './group_data/recent_url_groups_deprecated.csv'
+            iter = 1
+            while os.path.exists(DEPRECATED_PATH):
+                DEPRECATED_PATH = f'./group_data/recent_url_groups_deprecated_{iter}.csv'
+            os.rename(RECENT_USE_PATH, DEPRECATED_PATH)
+        with open(RECENT_USE_PATH, 'w') as file:
+            file.seek(0)
+            csv.writer(file).writerow(['group_name', 'timestamp'])
+            
 COMMANDS = ['open', 'list', 'sort', 'fix_file']
 while True:
     command = ''
     group_name = ''
     sort_arg = ''
+    fix_arg = ''
     valid_input = False
 
     print ("Available commands: ")
@@ -95,8 +117,12 @@ while True:
                 group_name = arg[0]
                 valid_input = True
                 break
-            elif command == COMMANDS[3] and arg[0] in SORT_ARGS:
+            elif command == COMMANDS[2] and arg[0] in SORT_ARGS:
                 sort_arg = arg[0]
+                valid_input = True
+                break
+            elif command == COMMANDS[3] and arg[0] in FIX_ARGS:
+                fix_arg = arg[0]
                 valid_input = True
                 break
             else: print("invalid command")
@@ -116,9 +142,9 @@ while True:
     elif command == COMMANDS[3]:
         print("***WARNING: this will deprecate the old file in the directory, if it exists")
         if input("Are you sure you want to continue (y/n): ").casefold() == 'y':
-            fix_file()
+            fix_file(fix_arg)
             print("=========================")
-            print("file fixed")
+            print(f"file{{'s' if fix_arg == '-jc'}} fixed")
             print("=========================")
             break
         else:
