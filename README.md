@@ -4,6 +4,7 @@
  - Adding/editing/removing groups all takes place in url_groups.json <b>(Do this by hand.... for now)</b>
  - Opens group of URLs in a new window of your OS' default browser
  - Upon opening a group, recent_url_groups.csv is updated according to current date & time
+ - simple shortcut template provided to easily open groups with using the CLI
 ### <ins>How to use:</ins>
  - CLI: Run <b><i>open</i></b> to open specific URL group(s)
  - CLI: Run <b><i>list</i></b> to list all URL groups currently stored in the .json file
@@ -13,7 +14,7 @@
      - <b><i>-mr</i></b> for most recently-used sort,
      - <b><i>-lr</i></b> for least recently-used sort. 
      - <b>*** Default sort without args is <i>-az</i> ***</b>
- - CLI: Run <i>fix_file</i> to: <b>A)</b> create a new .json file if file is missing, or <b>B)</b> deprecate current .json and .csv files in favor for default format files. Can use thefollowing arguments:
+ - CLI: Run <i>fix_file</i> to: <b>A)</b> create a new .json file if file is missing, or <b>B)</b> deprecate current .json and .csv files in favor for default format files. Can use the following arguments:
      - <b><i>-j</i></b> for <i>url_groups.json</i> formatting
      - <b><i>-c</i></b> for <i>recent_url_groups.csv</i> formatting
      - <b><i>-jc</i></b> to format both data files
