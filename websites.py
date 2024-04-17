@@ -7,7 +7,7 @@ import csv
 import os
 
 SORT_ARGS = ['-az', '-za', '-mr', '-lr']
-FIX_ARGS = ['-j', '-c', '-jc']
+FILE_ARGS = ['-j', '-c', '-jc']
 
 ## GROUP_PATH to url groups file
 GROUP_PATH = './group_data/url_groups.json'
@@ -32,22 +32,25 @@ def get_url_group(group_name:str="") -> dict:
 
 def sort_file(sort_arg:str="-az"):
     if sort_arg not in SORT_ARGS: print("invalid sort argument"); return
-    elif sort_arg == "" or sort_arg == '-az':
-        pass
-    elif sort_arg == '-za':
-        pass
-    elif sort_arg == '-mr':
-        pass
-    elif sort_arg == '-lr':
-        pass
-    
-    with open(GROUP_PATH, 'r+') as file:
-        groups = json.load(file)
-        sorted_groups = collections.OrderedDict(sorted(groups['groups'].items()))
-        groups['groups'] = sorted_groups
-        file.seek(0)
-        file.truncate()
-        json.dump(groups, file, indent=4)
+    elif sort_arg == "" or sort_arg == '-az' or sort_arg == '-za':
+        with open(GROUP_PATH, 'r+') as file:
+            groups = json.load(file)
+            sorted_groups = collections.OrderedDict(sorted(groups['groups'].items()), 
+                                                    reverse=False if (sort_arg == '-az' or sort_arg == '') else True)
+            groups['groups'] = sorted_groups
+            file.seek(0)
+            file.truncate()
+            json.dump(groups, file, indent=4)
+    elif sort_arg == '-mr' or sort_arg == '-lr':
+        if os.path.exists(RECENT_USE_PATH):
+            recent_groups = []
+            with open(GROUP_PATH, 'r+') as file:
+                groups = json.load(file)
+                with open(RECENT_USE_PATH, 'r') as file:
+                    recent_groups = csv.reader(file)
+                    recent_groups = list(recent_groups)
+    else:
+        print("invalid sort argument"); return
 
 def open_url_group(group_name:str=''):
     try:
@@ -86,67 +89,71 @@ def fix_file(args:str='-jc'):
         with open(RECENT_USE_PATH, 'w') as file:
             file.seek(0)
             csv.writer(file).writerow(['group_name', 'timestamp'])
-            
-COMMANDS = ['open', 'list', 'sort', 'fix_file']
-while True:
-    command = ''
-    group_name = ''
-    sort_arg = ''
-    fix_arg = ''
-    valid_input = False
-
-    print ("Available commands: ")
-    commands = ', '.join(COMMANDS)
-    print (commands)
+       
+def main():     
+    COMMANDS = ['open', 'list', 'sort', 'fix_file']
     while True:
+        command = ''
+        group_name = ''
+        sort_arg = ''
+        file_arg = ''
+        valid_input = False
+
+        print ("Available commands: ")
+        commands = ', '.join(COMMANDS)
+        print (commands)
         while True:
-            command_input = input("Enter command: ").split()
-            command = command_input[0]
-            if command not in COMMANDS:
-                print("invalid command"); break
-            elif (command == COMMANDS[1] or command == COMMANDS[2]) and len(command_input) > 1:
-                print("command requires no arguments"); break
-            elif command == COMMANDS[1] or command == COMMANDS[2]:
-                valid_input = True
-                break
-            arg = command_input[1:]
-            if len(arg) > 1:
-                print("too many arguments, executing first argument only, if applicable")
-                continue
-            if command == COMMANDS[0] and arg[0] in get_url_group_names():
-                group_name = arg[0]
-                valid_input = True
-                break
-            elif command == COMMANDS[2] and arg[0] in SORT_ARGS:
-                sort_arg = arg[0]
-                valid_input = True
-                break
-            elif command == COMMANDS[3] and arg[0] in FIX_ARGS:
-                fix_arg = arg[0]
-                valid_input = True
-                break
-            else: print("invalid command")
-        if valid_input: break
-    if command == COMMANDS[0]:
-        open_url_group(group_name)
-    elif command == COMMANDS[1]:
-        print("=========================")
-        for group in get_url_group_names():
-            print(group)
-        print("=========================")
-    elif command == COMMANDS[2]:
-        sort_file(sort_arg)
-        print("=========================")
-        print("file sorted")
-        print("=========================")
-    elif command == COMMANDS[3]:
-        print("***WARNING: this will deprecate the old file in the directory, if it exists")
-        if input("Are you sure you want to continue (y/n): ").casefold() == 'y':
-            fix_file(fix_arg)
+            while True:
+                command_input = input("Enter command: ").split()
+                command = command_input[0]
+                if command not in COMMANDS:
+                    print("invalid command"); break
+                elif (command == COMMANDS[1] or command == COMMANDS[2]) and len(command_input) > 1:
+                    print("command requires no arguments"); break
+                elif command == COMMANDS[1] or command == COMMANDS[2]:
+                    valid_input = True
+                    break
+                arg = command_input[1:]
+                if len(arg) > 1:
+                    print("too many arguments, executing first argument only, if applicable")
+                    continue
+                if command == COMMANDS[0] and arg[0] in get_url_group_names():
+                    group_name = arg[0]
+                    valid_input = True
+                    break
+                elif command == COMMANDS[2] and arg[0] in SORT_ARGS:
+                    sort_arg = arg[0]
+                    valid_input = True
+                    break
+                elif command == COMMANDS[3] and arg[0] in FILE_ARGS:
+                    file_arg = arg[0]
+                    valid_input = True
+                    break
+                else: print("invalid command")
+            if valid_input: break
+        if command == COMMANDS[0]:
+            open_url_group(group_name)
+        elif command == COMMANDS[1]:
             print("=========================")
-            print(f"file{{'s' if fix_arg == '-jc'}} fixed")
+            for group in get_url_group_names():
+                print(group)
             print("=========================")
-            break
-        else:
-            break
+        elif command == COMMANDS[2]:
+            print("=========================")
+            sort_file(sort_arg)
+            print("groups sorted")
+            print("=========================")
+        elif command == COMMANDS[3]:
+            print("***WARNING: this will deprecate the old file in the directory, if it exists")
+            if input("Are you sure you want to continue (y/n): ").casefold() == 'y':
+                fix_file(file_arg)
+                print("=========================")
+                print(f"file{{'s' if fix_arg == '-jc'}} fixed")
+                print("=========================")
+                break
+            else:
+                break
+        
+if __name__ == '__main__':
+    main()
     
