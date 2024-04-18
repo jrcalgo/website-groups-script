@@ -167,8 +167,9 @@ def main():
             print("***WARNING: this will deprecate the old file in the directory, if it exists")
             if input("Are you sure you want to continue (y/n): ").casefold() == 'y':
                 fix_file(file_arg)
+                s = 's' if file_arg == '-jc' else ''
                 print("=========================")
-                print(f"file{{'s' if fix_arg == '-jc'}} fixed")
+                print(f"file{s} fixed")
                 print("=========================")
                 break
             else:
