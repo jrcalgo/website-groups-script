@@ -43,23 +43,26 @@ def sort_file(sort_arg:str="-az"):
             file.truncate()
             json.dump(groups, file, indent=4)
     elif sort_arg == '-mr' or sort_arg == '-lr':
+        if sort_arg == '-mr' and recent_groups[0][1] > recent_groups[1][1]:
+            print("groups already sorted")
+            return
+        elif sort_arg == '-lr' and recent_groups[0][1] < recent_groups[1][1]:
+            print("groups already sorted")
+            return
         if len(get_url_group_names()) > 1 and os.path.exists(RECENT_USE_PATH):
             recent_groups = []
+            with open(RECENT_USE_PATH, 'r') as file:
+                data = csv.reader(file)
+                for row in data:
+                    timestamp = datetime.strptime(row[1], TIMESTAMP_FORMAT)
+                    recent_groups.append((row[0], timestamp))
+                recent_groups.sort(key=lambda x: x[1], reverse=False if (sort_arg == '-mr' or sort_arg == '') else True)
             with open(GROUP_PATH, 'r+') as file:
                 groups = json.load(file)
-                with open(RECENT_USE_PATH, 'r') as file:
-                    data = csv.reader(file)
-                    for row in data:
-                        timestamp = datetime.strptime(row[1], TIMESTAMP_FORMAT)
-                        recent_groups.append((row[0], timestamp))
-                if sort_arg == '-mr' and recent_groups[0][1] > recent_groups[1][1]:
-                    print("groups already sorted")
-                    return
-                elif sort_arg == '-lr' and recent_groups[0][1] < recent_groups[1][1]:
-                    print("groups already sorted")
-                    return
-                else:
-                    
+                groups['groups'] = {group: groups['groups'][group] for group, _ in recent_groups}
+                file.seek(0)
+                file.truncate()
+                json.dump(groups, file, indent=4)
         else:
             print("no recent groups to sort"); return
     else:
@@ -76,6 +79,10 @@ def open_url_group(group_name:str=''):
                     first_url = False
                 else:
                     webbrowser.open(url, new=2, autoraise=False)
+            with open(RECENT_USE_PATH, 'r+') as file:
+                data = csv.reader(file)
+                data[group_name] = datetime.now().strftime(TIMESTAMP_FORMAT)
+                csv.writer(file).writerows(data)
         else:
             return
     except:
