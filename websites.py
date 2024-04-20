@@ -124,16 +124,19 @@ def main():
         print (commands)
         while True:
             while True:
-                command_input = input("Enter command: ").split()
-                command = command_input[0]
-                if command not in COMMANDS:
-                    print("invalid command"); break
-                elif (command == COMMANDS[1] or command == COMMANDS[2]) and len(command_input) > 1:
-                    print("command requires no arguments"); break
-                elif command == COMMANDS[1] or command == COMMANDS[2]:
-                    valid_input = True
-                    break
-                arg = command_input[1:]
+                while True:
+                    command_input = input("Enter command: ").split()
+                    command = command_input[0]
+                    arg = command_input[1:]
+                    if command not in COMMANDS:
+                        print("invalid command")
+                    elif command == COMMANDS[0] and len(arg) < 1:
+                        print("open requires arguments; use an available group name")
+                    elif command == COMMANDS[1] and len(arg) > 0:
+                        print("list requires no arguments")
+                    else:
+                        valid_input = True
+                        break
                 if len(arg) > 1:
                     print("too many arguments, executing first argument only, if applicable")
                     continue
@@ -149,7 +152,7 @@ def main():
                     file_arg = arg[0]
                     valid_input = True
                     break
-                else: print("invalid command")
+                else: print("invalid argument")
             if valid_input: break
         if command == COMMANDS[0]:
             open_url_group(group_name)
