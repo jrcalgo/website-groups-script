@@ -4,7 +4,7 @@
  - Adding/editing/removing groups all takes place in url_groups.json <b>(Do this by hand.... for now)</b>
  - Opens group of URLs in a new window of your OS' default browser
  - Upon opening a group, recent_url_groups.csv is updated according to current date & time
- - simple shortcut template provided to easily open groups with using the CLI
+ - short-shortcut template script included
 ### <ins>How to use:</ins>
  - CLI: Run <b><i>open</i></b> to open specific URL group(s)
  - CLI: Run <b><i>list</i></b> to list all URL groups currently stored in the .json file
