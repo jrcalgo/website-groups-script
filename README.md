@@ -1,5 +1,5 @@
 ## Simple website URL script for grouping and opening said grouped URLs in one window
-<b>Very much so a Quality-of-life improvement over just using favorites or bookmarks in your browser</b>
+<b>a Quality-of-life improvement over just using favorites or bookmarks in your browser</b>
 ### <ins>Functionality:</ins>
  - Adding/editing/removing groups all takes place in url_groups.json <b>(Do this by hand.... for now)</b>
  - Opens group of URLs in a new window of your OS' default browser
