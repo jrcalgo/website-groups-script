@@ -9,5 +9,10 @@
             "08_Image_Alignment": "https://colab.research.google.com/drive/1cQqOYar7ZlPB6XRAdPHur4bLmPPdr59w",
             "09_panorama": "https://colab.research.google.com/drive/1BykDdFSO7eVMGoWFgDI3ZgruwJ8GmUYt"
         }
+		"Necessary_work_tabs": {
+			"UNCC_Employee_Page": "https://my.charlotte.edu/employee",
+			"OpenAI_RL_Resource": "https://spinningup.openai.com/en/latest/index.html",
+			"Arxiv_research_archive": "https://arxiv.org"
+		}
     }
 }
